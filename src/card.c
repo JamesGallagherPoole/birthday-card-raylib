@@ -26,6 +26,18 @@ void UpdateCard(Letter *letter, Card *card) {
   }
   int screen_height = GetScreenHeight();
 
+  // Calculate the content rec that we can display things inside of
+  Vector2 globalPos = Vector2Add(letter->pos, card->pos);
+
+  Vector2 desired_dimensions = GetScaledUpDimensions(200, card->texture.height);
+  int half_padding = GetWindowPadding() / 2;
+  Rectangle cardRect = (Rectangle){half_padding, globalPos.y,
+                                   desired_dimensions.x, desired_dimensions.y};
+  int32_t inner_pad = 70;
+  card->contentRec = (Rectangle){cardRect.x + inner_pad, cardRect.y + inner_pad,
+                                 cardRect.width - 2 * inner_pad,
+                                 cardRect.height - 2 * inner_pad};
+
   switch (card->cardType) {
   case CARD_ENVELOPE:
     if (card->showState == VISIBLE) {
@@ -69,33 +81,9 @@ void UpdateCard(Letter *letter, Card *card) {
   case CARD_BOAT: {
     AskoyBoatData *data = &card->cardData.askoyBoatData;
 
-    // TODO: Make this contentRec global and quit this duplication nonsense
-    Vector2 globalPos = Vector2Add(letter->pos, card->pos);
-    Vector2 desired_dimensions =
-        GetScaledUpDimensions(200, card->texture.height);
-    int half_padding = GetWindowPadding() / 2;
-    Rectangle contentRec = (Rectangle){
-        half_padding, globalPos.y, desired_dimensions.x, desired_dimensions.y};
-
     switch (data->state) {
     case BOAT: {
-
-      // Todo: Duplicate Code Start - Refactor
-      Vector2 globalPos = Vector2Add(letter->pos, card->pos);
-
-      Vector2 desired_dimensions =
-          GetScaledUpDimensions(200, card->texture.height);
-      int half_padding = GetWindowPadding() / 2;
-      Rectangle cardRect =
-          (Rectangle){half_padding, globalPos.y, desired_dimensions.x,
-                      desired_dimensions.y};
-      int32_t inner_pad = 70;
-      Rectangle content = (Rectangle){
-          cardRect.x + inner_pad, cardRect.y + inner_pad,
-          cardRect.width - 2 * inner_pad, cardRect.height - 2 * inner_pad};
-      // Duplicate code end
-
-      int maxX = content.width - (content.width / 2);
+      int maxX = card->contentRec.width - (card->contentRec.width / 2);
 
       if (data->boatPosX >= maxX && (IsKeyPressed(KEY_SPACE) ||
                                      IsMouseButtonPressed(MOUSE_BUTTON_LEFT))) {
@@ -217,13 +205,13 @@ static Rectangle FitInto(Rectangle bounds, float srcW, float srcH) {
 void DrawCard(Letter *letter, Card *card) {
   Vector2 globalPos = Vector2Add(letter->pos, card->pos);
 
-  Vector2 desired_dimensions = GetScaledUpDimensions(200, card->texture.height);
-  int half_padding = GetWindowPadding() / 2;
-  Rectangle cardRect = (Rectangle){half_padding, globalPos.y,
-                                   desired_dimensions.x, desired_dimensions.y};
-
   switch (card->cardType) {
   case CARD_ENVELOPE: {
+    Vector2 desired_dimensions =
+        GetScaledUpDimensions(200, card->texture.height);
+    int half_padding = GetWindowPadding() / 2;
+    Rectangle cardRect = (Rectangle){
+        half_padding, globalPos.y, desired_dimensions.x, desired_dimensions.y};
 
     DrawTexturePro(card->texture,
                    letter->animation->frame_rec, // source frame
@@ -246,14 +234,9 @@ void DrawCard(Letter *letter, Card *card) {
   case CARD_IMAGE: {
     Texture2D tex = card->cardData.cardImageData.texture;
 
-    // Inner content area inside the card
-    int32_t inner_pad = 70;
-    Rectangle content = (Rectangle){
-        cardRect.x + inner_pad, cardRect.y + inner_pad,
-        cardRect.width - 2 * inner_pad, cardRect.height - 2 * inner_pad};
-
     // Fit the IMAGE into the content box
-    Rectangle dst = FitInto(content, (float)tex.width, (float)tex.height);
+    Rectangle dst =
+        FitInto(card->contentRec, (float)tex.width, (float)tex.height);
     Rectangle src = (Rectangle){0, 0, (float)tex.width, (float)tex.height};
     DrawTexturePro(tex, src, dst, (Vector2){0, 0}, 0, WHITE);
 
@@ -266,14 +249,9 @@ void DrawCard(Letter *letter, Card *card) {
   case CARD_BOAT: {
     AskoyBoatData *data = &card->cardData.askoyBoatData;
 
-    // Inner content
-    int32_t inner_pad = 70;
-    Rectangle content = (Rectangle){
-        cardRect.x + inner_pad, cardRect.y + inner_pad,
-        cardRect.width - 2 * inner_pad, cardRect.height - 2 * inner_pad};
-
     Texture2D tex = data->oceanBackground;
-    Rectangle bgDst = FitInto(content, (float)tex.width, (float)tex.height);
+    Rectangle bgDst =
+        FitInto(card->contentRec, (float)tex.width, (float)tex.height);
     Rectangle bgSrc = (Rectangle){0, 0, (float)tex.width, (float)tex.height};
 
     switch (data->state) {
@@ -288,7 +266,7 @@ void DrawCard(Letter *letter, Card *card) {
                      bgDst, globalBoatPos, 0, WHITE);
 
       if (card->showState == VISIBLE) {
-        int maxX = content.width - (content.width / 2);
+        int maxX = card->contentRec.width - (card->contentRec.width / 2);
         if (data->boatPosX >= maxX) {
           DrawText("Trykk til å gå til hytten...", 40, GetScreenHeight() - 30,
                    20, DARKGRAY);

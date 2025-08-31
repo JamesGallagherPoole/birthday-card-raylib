@@ -63,6 +63,7 @@ typedef struct {
   CardData cardData;
   ShowState showState;
   bool isFinished;
+  Rectangle contentRec;
 } Card;
 
 typedef struct {

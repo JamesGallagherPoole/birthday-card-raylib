@@ -121,6 +121,14 @@ void UpdateLetter(Letter *letter) {
     }
     break;
   case VISIBLE:
+    if (letter->current_card_index < letter->numberOfCards - 1) {
+      if (CardArray_At(letter->cards, letter->current_card_index + 1)
+              ->showState == ENTER) {
+        UpdateCard(letter,
+                   CardArray_At(letter->cards, letter->current_card_index + 1));
+      }
+    }
+
     UpdateCard(letter, CardArray_At(letter->cards, letter->current_card_index));
     break;
   case EXIT:
