@@ -222,13 +222,13 @@ void DrawCard(Letter *letter, Card *card) {
   Rectangle cardRect = (Rectangle){half_padding, globalPos.y,
                                    desired_dimensions.x, desired_dimensions.y};
 
-  DrawTexturePro(card->texture,
-                 letter->animation->frame_rec, // source frame
-                 cardRect,                     // destination background area
-                 (Vector2){0, 0}, 0, WHITE);
-
   switch (card->cardType) {
   case CARD_ENVELOPE: {
+
+    DrawTexturePro(card->texture,
+                   letter->animation->frame_rec, // source frame
+                   cardRect,                     // destination background area
+                   (Vector2){0, 0}, 0, WHITE);
     Vector2 scaledPos = ScalePointBasedOnRef(200, (Vector2){0, 50});
     Vector2 titlePos =
         Vector2Add(globalPos, (Vector2){scaledPos.x, scaledPos.y});
