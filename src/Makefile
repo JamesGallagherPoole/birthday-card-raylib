@@ -348,10 +348,11 @@ $(OBJDIR)/%.o: %.c
 clean:
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),WINDOWS)
-		del *.o *.exe /s
+		del build *.o *.exe /s
     endif
     ifeq ($(PLATFORM_OS),LINUX)
 		find . -type f -executable -delete
+		rm -rf build/
 		rm -fv *.o
     endif
     ifeq ($(PLATFORM_OS),OSX)
