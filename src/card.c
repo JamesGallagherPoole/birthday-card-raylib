@@ -20,7 +20,7 @@ Card CreateCard(CardParams cardParams) {
   return card;
 }
 
-void UpdateCard(Letter *letter, Card *card) {
+void UpdateCard(Letter *letter, Card *card, float dt) {
   if (card->showState == DONE) {
     return;
   }
@@ -96,7 +96,7 @@ void UpdateCard(Letter *letter, Card *card) {
           SetSoundVolume(letter->sounds.intro, 0.1);
           PlaySound(letter->sounds.boatBop);
         }
-        data->boatVelX += data->accel * GetFrameTime();
+        data->boatVelX += data->accel * dt;
       } else {
         if (IsSoundPlaying(letter->sounds.boatBop)) {
           PauseSound(letter->sounds.boatBop);
@@ -109,18 +109,18 @@ void UpdateCard(Letter *letter, Card *card) {
         if (data->boatVelX < 0) {
           sign = -1;
         }
-        data->boatVelX -= sign * data->friction * GetFrameTime();
+        data->boatVelX -= sign * data->friction * dt;
       }
 
       data->boatVelX = Clamp(data->boatVelX, 0, data->boatTopSpeed);
-      data->boatPosX += data->boatVelX * GetFrameTime();
+      data->boatPosX += data->boatVelX * dt;
       break;
     }
     case ARRIVED_ASKOY:
       if (!IsSoundPlaying(letter->sounds.boatBop)) {
         StopSound(letter->sounds.boatBop);
       }
-      data->timer += GetFrameTime();
+      data->timer += dt;
       if (data->timer > 3.0f) {
         if (IsKeyPressed(KEY_SPACE) ||
             IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
@@ -133,7 +133,7 @@ void UpdateCard(Letter *letter, Card *card) {
       if (!IsSoundPlaying(letter->sounds.ahhh)) {
         PlaySound(letter->sounds.ahhh);
       }
-      data->timer += GetFrameTime();
+      data->timer += dt;
       if (data->timer > 3.0f) {
         if (IsKeyPressed(KEY_SPACE) ||
             IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
@@ -174,7 +174,7 @@ void UpdateCard(Letter *letter, Card *card) {
   case EXIT:
     // Animate Out
     if (card->pos.y < screen_height + 150) {
-      card->pos.y += letter->slideSpeed * GetFrameTime();
+      card->pos.y += letter->slideSpeed * dt;
     } else {
       card->showState = DONE;
 

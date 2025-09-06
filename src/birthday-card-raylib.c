@@ -89,7 +89,7 @@ static void UpdateDrawFrame(void) {
     return;
   }
 
-  UpdateLetter(letter);
+  UpdateLetter(letter, GetFrameTime());
 
   //----------------------------------------------------------------------------------
   BeginDrawing();

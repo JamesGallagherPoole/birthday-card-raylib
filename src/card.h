@@ -11,7 +11,7 @@ typedef struct {
 } CardParams;
 
 Card CreateCard(CardParams cardParams);
-void UpdateCard(Letter *letter, Card *card);
+void UpdateCard(Letter *letter, Card *card, float dt);
 void DrawCard(Letter *letter, Card *card);
 
 #endif

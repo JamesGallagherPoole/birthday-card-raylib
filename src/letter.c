@@ -95,7 +95,7 @@ Letter *CreateLetter(Arena *arena) {
   return letter;
 }
 
-void UpdateLetter(Letter *letter) {
+void UpdateLetter(Letter *letter, float dt) {
   UpdateAnimation(letter->animation);
 
   int screen_width = GetScreenWidth();
@@ -113,7 +113,7 @@ void UpdateLetter(Letter *letter) {
     break;
   case ENTER:
     if (letter->pos.y < center_y) {
-      letter->pos.y += letter->slideSpeed * GetFrameTime();
+      letter->pos.y += letter->slideSpeed * dt;
     } else {
       letter->showState = VISIBLE;
       // Set the first card (envelope) as visible
@@ -125,11 +125,13 @@ void UpdateLetter(Letter *letter) {
       if (CardArray_At(letter->cards, letter->current_card_index + 1)
               ->showState == ENTER) {
         UpdateCard(letter,
-                   CardArray_At(letter->cards, letter->current_card_index + 1));
+                   CardArray_At(letter->cards, letter->current_card_index + 1),
+                   dt);
       }
     }
 
-    UpdateCard(letter, CardArray_At(letter->cards, letter->current_card_index));
+    UpdateCard(letter, CardArray_At(letter->cards, letter->current_card_index),
+               dt);
     break;
   case EXIT:
     break;
