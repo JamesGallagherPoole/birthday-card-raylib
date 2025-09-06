@@ -16,7 +16,7 @@ Letter *CreateLetter(Arena *arena) {
   letter->slideSpeed = 450;
   letter->showState = INVISIBLE;
   letter->current_card_index = 0;
-  letter->cards = CardArray_Create(arena, numberOfCards);
+  letter->cards;
   letter->sounds.intro = LoadSound("assets/bad_penny.ogg");
   letter->sounds.tear = LoadSound("assets/tear.ogg");
   letter->sounds.boatBop = LoadSound("assets/boat bop.ogg");

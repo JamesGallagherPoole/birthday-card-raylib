@@ -6,7 +6,6 @@
 
 typedef struct {
   CardType cardType;
-  CardData cardData;
   Texture2D cardTexture;
 } CardParams;
 

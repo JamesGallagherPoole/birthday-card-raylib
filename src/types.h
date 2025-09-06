@@ -7,6 +7,9 @@
 #include <math.h>
 #include <stdint.h>
 
+typedef struct Letter Letter;
+typedef struct Card Card;
+
 /*
  * Cards
  */
@@ -17,24 +20,38 @@ typedef enum {
   CARD_BOAT,
 } CardType;
 
-typedef struct {
-  char text[256];
-} CardTextData;
+typedef enum { BOAT, ARRIVED_ASKOY, RELAXED_ASKOY } AskoyState;
+
+struct Card {
+  void (*Update)(Letter *letter, Card *card, float dt);
+  void (*Draw)(Letter *letter, Card *card);
+  Texture2D texture;
+  Vector2 pos;
+  ShowState showState;
+  bool isFinished;
+  Rectangle contentRec;
+};
 
 typedef struct {
+  Card card;
+  char text[256];
+} TextCard;
+
+typedef struct {
+  Card card;
   char title[128];
   char subtitle[128];
-} CardEnvelopeData;
+} EnvelopeCard;
 
 typedef struct {
+  Card card;
   Texture2D texture;
   char text[128];
   Color textColour;
-} CardImageData;
-
-typedef enum { BOAT, ARRIVED_ASKOY, RELAXED_ASKOY } AskoyState;
+} ImageCard;
 
 typedef struct {
+  Card card;
   Texture2D oceanBackground;
   Texture2D boatTex;
   Texture2D hytteOne;
@@ -47,24 +64,7 @@ typedef struct {
   float_t accel;
   float_t friction;
   float timer;
-} AskoyBoatData;
-
-typedef union {
-  CardTextData cardTextData;
-  CardEnvelopeData cardEnvelopeData;
-  CardImageData cardImageData;
-  AskoyBoatData askoyBoatData;
-} CardData;
-
-typedef struct {
-  Texture2D texture;
-  Vector2 pos;
-  CardType cardType;
-  CardData cardData;
-  ShowState showState;
-  bool isFinished;
-  Rectangle contentRec;
-} Card;
+} BoatCard;
 
 typedef struct {
   Card *items;
@@ -82,15 +82,19 @@ typedef struct {
 /*
  * Letter
  */
-typedef struct {
+struct Letter {
   Vector2 pos;
   float slideSpeed;
   ShowState showState;
   Animation *animation; // TODO: To be moved inside the envelope data
   int current_card_index;
   int numberOfCards;
-  CardArray *cards;
+  Card *cards[4];
   Sounds sounds;
-} Letter;
+};
+
+typedef struct {
+  void (*UpdateC)(Letter *letter, Card *card);
+} CardProcs;
 
 #endif
