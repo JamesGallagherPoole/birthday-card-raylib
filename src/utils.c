@@ -36,3 +36,16 @@ int GetWindowPadding(void) {
   int padding = screen_width / 8;
   return padding;
 }
+
+Rectangle FitInto(Rectangle bounds, float srcW, float srcH) {
+  if (srcW <= 0 || srcH <= 0)
+    return (Rectangle){bounds.x, bounds.y, 0, 0};
+  float sx = bounds.width / srcW;
+  float sy = bounds.height / srcH;
+  float s = (sx < sy) ? sx : sy; // contain
+  float w = srcW * s;
+  float h = srcH * s;
+  float x = bounds.x + (bounds.width - w) * 0.5f;
+  float y = bounds.y + (bounds.height - h) * 0.5f;
+  return (Rectangle){x, y, w, h};
+}
