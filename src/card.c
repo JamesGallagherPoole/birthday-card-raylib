@@ -2,6 +2,7 @@
 #include "animation.h"
 #include "boat_card.h"
 #include "custom_arrays.h"
+#include "image_card.h"
 #include "raylib.h"
 #include "raymath.h"
 #include "types.h"
@@ -157,22 +158,11 @@ void DrawCard(Letter *letter, Card *card) {
     break;
   }
   case CARD_IMAGE: {
-    Texture2D tex = card->cardData.cardImageData.texture;
-
-    // Fit the IMAGE into the content box
-    Rectangle dst =
-        FitInto(card->contentRec, (float)tex.width, (float)tex.height);
-    Rectangle src = (Rectangle){0, 0, (float)tex.width, (float)tex.height};
-    DrawTexturePro(tex, src, dst, (Vector2){0, 0}, 0, WHITE);
-
-    // Caption
-    Vector2 textPos =
-        Vector2Add(globalPos, ScalePointBasedOnRef(200, (Vector2){0, 100}));
-    DrawText(card->cardData.cardImageData.text, textPos.x, textPos.y, 20,
-             card->cardData.cardImageData.textColour);
+    DrawImageCard(letter, card);
     break;
   case CARD_BOAT: {
     DrawBoatCard(letter, card);
+    break;
   }
   }
   }
